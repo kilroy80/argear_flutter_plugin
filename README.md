@@ -8,16 +8,16 @@ ARGear SDK Flutter Plugin. This plugin supports Android and iOS. All features su
 
 Open the App Level `build.gradle` file and add minSdkVersion 23
 ```groovy
-defaultConfig {    
-        minSdkVersion 23
+defaultConfig {
+    minSdkVersion 23
 }
 ```
 
 Open the `AndroidManifest.xml` file and add the required device permissions and uses-feature to the file.
 
 ```xml
-<manifest>
-...
+<manifest xmlns:tools="http://schemas.android.com/tools">
+    ...
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -31,7 +31,10 @@ Open the `AndroidManifest.xml` file and add the required device permissions and 
     <uses-feature
             android:name="android.hardware.camera"
             android:required="true"/>
-...
+
+    <application
+            tools:replace="android:label">
+    ...
 </manifest>
 ```
 
@@ -62,10 +65,10 @@ Widget build(BuildContext context) {
                 apiKey: Config.apiKey,
                 secretKey: Config.secretKey,
                 authKey: Config.authKey,
-                onCallback: (method, arguments) {                  
+                onCallback: (method, arguments) {
                   debugPrint(method.toString() + ' / ' + arguments.toString());
                 },
-                onPre: (method, arguments) {                  
+                onPre: (method, arguments) {
                   debugPrint(method.toString() + ' / ' + arguments.toString());
                 },
                 onComplete: (method, arguments) {
