@@ -12,10 +12,7 @@ import android.os.Looper
 import android.util.AttributeSet
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import com.kino.argear.argear_flutter_plugin.camera.GLView
-import com.kino.argear.argear_flutter_plugin.camera.ReferenceCamera
-import com.kino.argear.argear_flutter_plugin.camera.ReferenceCamera1
-import com.kino.argear.argear_flutter_plugin.camera.ReferenceCamera2
+import com.kino.argear.argear_flutter_plugin.camera.*
 import com.kino.argear.argear_flutter_plugin.rendering.CameraTexture
 import com.kino.argear.argear_flutter_plugin.rendering.ScreenRenderer
 import com.kino.argear.argear_flutter_plugin.utils.ARGearTypeUtils
@@ -54,7 +51,7 @@ class ARGearSessionView : FrameLayout {
     private var viewActivity: Activity? = null
 
     private lateinit var camera: ReferenceCamera
-    private lateinit var glView: GLView
+    private lateinit var glView: CameraGLView
     private lateinit var screenRenderer: ScreenRenderer
     private lateinit var cameraTexture: CameraTexture
 
@@ -122,8 +119,8 @@ class ARGearSessionView : FrameLayout {
         screenRenderer = ScreenRenderer()
         cameraTexture = CameraTexture()
 
-        glView = GLView(context, glViewListener)
-        glView.setZOrderMediaOverlay(true)
+        glView = CameraGLView(context, glViewListener)
+//        glView.setZOrderMediaOverlay(true)
         addView(glView, params)
     }
 
@@ -209,7 +206,7 @@ class ARGearSessionView : FrameLayout {
 
         if ((gLViewWidth != glView.viewWidth || gLViewHeight != glView.height)
         ) {
-            glView.holder.setFixedSize(gLViewWidth, gLViewHeight)
+//            glView.holder.setFixedSize(gLViewWidth, gLViewHeight)
         }
 
 //        glView.holder?.setFixedSize(gLViewWidth, gLViewHeight)
@@ -352,8 +349,8 @@ class ARGearSessionView : FrameLayout {
     }
     
     // region - GLViewListener
-    private var glViewListener: GLView.GLViewListener = object :
-            GLView.GLViewListener {
+    private var glViewListener: CameraGLView.GLViewListener = object :
+            CameraGLView.GLViewListener {
         override fun onSurfaceCreated(
                 gl: GL10?,
                 config: EGLConfig?

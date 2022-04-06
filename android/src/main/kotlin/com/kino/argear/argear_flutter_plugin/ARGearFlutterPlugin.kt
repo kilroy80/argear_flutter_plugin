@@ -22,13 +22,14 @@ class ARGearFlutterPlugin: FlutterPlugin, ActivityAware {
   // them functionally equivalent. Only one of onAttachedToEngine or registerWith will be called
   // depending on the user's project. onAttachedToEngine or registerWith must both be defined
   // in the same class.
-  companion object {
-    @JvmStatic
-    fun registerWith(registrar: Registrar) {
-      registrar.platformViewRegistry()
-               .registerViewFactory("argear_flutter_plugin", ARGearViewFactory(registrar.activity(), registrar.messenger()))
-    }
-  }
+
+//  companion object {
+//    @JvmStatic
+//    fun registerWith(registrar: Registrar) {
+//      registrar.platformViewRegistry()
+//               .registerViewFactory("argear_flutter_plugin", ARGearViewFactory(registrar.activity(), registrar.messenger()))
+//    }
+//  }
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     Log.i(TAG, "onAttachedToEngine")

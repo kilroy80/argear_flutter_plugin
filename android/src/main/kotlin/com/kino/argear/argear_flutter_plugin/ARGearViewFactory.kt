@@ -11,10 +11,10 @@ import io.flutter.plugin.platform.PlatformViewFactory
 class ARGearViewFactory(private val activity: Activity, private val messenger: BinaryMessenger)
     : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
 
-    override fun create(context: Context, id: Int, args: Any?): PlatformView {
+    override fun create(context: Context?, id: Int, args: Any?): PlatformView {
         val params = args as HashMap<*, *>
         Log.i("ARGearViewFactory", id.toString())
         Log.i("ARGearViewFactory", args.toString())
-        return ARGearView(activity, context, messenger, id)
+        return ARGearView(activity, context!!, messenger, id)
     }
 }
