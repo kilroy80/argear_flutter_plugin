@@ -2,7 +2,6 @@ package com.kino.argear.argear_flutter_plugin.utils
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 
@@ -17,9 +16,9 @@ object PermissionHelper {
     )
 
     @JvmStatic
-    fun hasPermission(context: Context): Boolean {
+    fun hasPermission(activity: Activity): Boolean {
         for (permission in permissions) {
-            if (ActivityCompat.checkSelfPermission(context, permission)
+            if (ActivityCompat.checkSelfPermission(activity, permission)
                     != PackageManager.PERMISSION_GRANTED
             ) {
                 return false
@@ -29,21 +28,15 @@ object PermissionHelper {
     }
 
     @JvmStatic
-    fun requestPermission(context: Context) {
-        if (context is Activity) {
-            ActivityCompat.requestPermissions(context, permissions, PERMISSION_CODE)
-        } else {
-            throw ClassCastException("Current Context not casting Activity")
-        }
+    fun requestPermission(activity: Activity) {
+        ActivityCompat.requestPermissions(activity, permissions, PERMISSION_CODE)
     }
 
     @JvmStatic
-    fun shouldShowRequestPermissionRationale(context: Context): Boolean {
-        if (context is Activity) {
-            for (permission in permissions) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(context, permission)) {
-                    return true
-                }
+    fun shouldShowRequestPermissionRationale(activity: Activity): Boolean {
+        for (permission in permissions) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
+                return true
             }
         }
         return false

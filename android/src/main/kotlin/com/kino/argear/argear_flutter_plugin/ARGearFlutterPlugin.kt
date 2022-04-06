@@ -34,8 +34,6 @@ class ARGearFlutterPlugin: FlutterPlugin, ActivityAware {
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     Log.i(TAG, "onAttachedToEngine")
     this.flutterPluginBinding = flutterPluginBinding
-    flutterPluginBinding.platformViewRegistry.registerViewFactory("argear_flutter_plugin",
-      ARGearViewFactory(flutterPluginBinding.binaryMessenger))
   }
 
   override fun onDetachedFromEngine(p0: FlutterPlugin.FlutterPluginBinding) {
@@ -54,10 +52,10 @@ class ARGearFlutterPlugin: FlutterPlugin, ActivityAware {
 
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
     Log.i(TAG, "onAttachedToActivity")
-//    flutterPluginBinding?.let {
-//      it.platformViewRegistry.registerViewFactory("argear_flutter_plugin",
-//              ARGearViewFactory(binding.activity, it.binaryMessenger))
-//    }
+    flutterPluginBinding?.let {
+      it.platformViewRegistry.registerViewFactory("argear_flutter_plugin",
+              ARGearViewFactory(binding.activity, it.binaryMessenger))
+    }
   }
 
   override fun onDetachedFromActivityForConfigChanges() {
