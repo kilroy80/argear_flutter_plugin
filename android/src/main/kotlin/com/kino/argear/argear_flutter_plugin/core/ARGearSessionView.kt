@@ -79,10 +79,10 @@ class ARGearSessionView : FrameLayout {
         clearTempMediaFiles()
     }
 
-    fun setUpSdk(apiUrl: String, apiKey: String, secretKey: String, authKey: String, channel: MethodChannel, activity: Activity) {
+    fun setUpSdk(context: Context, apiUrl: String, apiKey: String, secretKey: String, authKey: String, channel: MethodChannel) {
 
         methodChannel = channel
-        viewActivity = activity
+        viewActivity = context as Activity
 
         val config = ARGConfig(
                 apiUrl,

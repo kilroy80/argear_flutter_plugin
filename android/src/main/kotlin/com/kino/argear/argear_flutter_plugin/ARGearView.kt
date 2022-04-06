@@ -21,7 +21,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 
-class ARGearView(private val activity: Activity, context: Context, messenger: BinaryMessenger, id: Int)
+class ARGearView(private val context: Context, messenger: BinaryMessenger, id: Int)
     : PlatformView, MethodChannel.MethodCallHandler {
 
     private val TAG: String = ARGearView::class.java.simpleName
@@ -41,7 +41,7 @@ class ARGearView(private val activity: Activity, context: Context, messenger: Bi
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             "init" -> {
-                arGearSessionViewInit(call, result, methodChannel, activity)
+                arGearSessionViewInit(context, call, result, methodChannel)
             }
             "dispose" -> {
                 Log.i(TAG, "dispose")
@@ -66,7 +66,7 @@ class ARGearView(private val activity: Activity, context: Context, messenger: Bi
             "setSticker" -> {
                 val data: String? = call.argument("itemModel")
                 val itemModel = Gson().fromJson(data.toString(), ItemModel::class.java)
-                ARGearManager.setSticker(activity, itemModel, object : ARGearManager.OnARGearManagerCallback {
+                ARGearManager.setSticker(context, itemModel, object : ARGearManager.OnARGearManagerCallback {
                     override fun onSuccess(data: Any?) {
                         result.success(data)
                     }
@@ -82,7 +82,7 @@ class ARGearView(private val activity: Activity, context: Context, messenger: Bi
             "setFilter" -> {
                 val data: String? = call.argument("itemModel")
                 val itemModel = Gson().fromJson(data.toString(), ItemModel::class.java)
-                ARGearManager.setFilter(activity, itemModel, object : ARGearManager.OnARGearManagerCallback {
+                ARGearManager.setFilter(context, itemModel, object : ARGearManager.OnARGearManagerCallback {
                     override fun onSuccess(data: Any?) {
                         result.success(data)
                     }
@@ -201,10 +201,10 @@ class ARGearView(private val activity: Activity, context: Context, messenger: Bi
             }
         }
 
-        activity.application.registerActivityLifecycleCallbacks(this.activityLifecycleCallbacks)
+        (context as Activity).application.registerActivityLifecycleCallbacks(this.activityLifecycleCallbacks)
     }
 
-    private fun arGearSessionViewInit(call: MethodCall, result: MethodChannel.Result, channel: MethodChannel, activity: Activity) {
+    private fun arGearSessionViewInit(context: Context, call: MethodCall, result: MethodChannel.Result, channel: MethodChannel) {
         Log.i(TAG, "arGearSessionViewInit")
 
         val apiUrl: String? = call.argument("apiUrl")
@@ -218,7 +218,7 @@ class ARGearView(private val activity: Activity, context: Context, messenger: Bi
         }
 
         if (apiUrl != null && apiKey != null && secretKey != null && authKey != null) {
-            arGearSessionView?.setUpSdk(apiUrl, apiKey, secretKey, authKey, channel, activity)
+            arGearSessionView?.setUpSdk(context, apiUrl, apiKey, secretKey, authKey, channel)
             onResume()
         }
 
@@ -247,8 +247,8 @@ class ARGearView(private val activity: Activity, context: Context, messenger: Bi
             try {
                 arGearSessionView?.resume()
             } catch (e: Exception) {
-                ARGearUtils.displayError(activity, "Unable to get camera", e)
-                activity.finish()
+                ARGearUtils.displayError((context as Activity), "Unable to get camera", e)
+                (context as Activity).finish()
                 return
             }
         }
@@ -271,12 +271,12 @@ class ARGearView(private val activity: Activity, context: Context, messenger: Bi
     }
 
     private fun hasPermission(): Boolean {
-        if (!PermissionHelper.hasPermission(activity)) {
-            if (PermissionHelper.shouldShowRequestPermissionRationale(activity)) {
-                ARGearUtils.displayError(activity, "Please check your permissions!", null)
+        if (!PermissionHelper.hasPermission(context)) {
+            if (PermissionHelper.shouldShowRequestPermissionRationale(context)) {
+                ARGearUtils.displayError(context, "Please check your permissions!", null)
                 return false
             }
-            PermissionHelper.requestPermission(activity)
+            PermissionHelper.requestPermission(context)
             return false
         }
         return true
