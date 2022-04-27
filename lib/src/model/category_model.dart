@@ -29,7 +29,7 @@ class CategoryModel {
     'items': _items.map((i) => i.toJson()).toList(),
   };
 
-  parse(parsedJson) {
+  void parse(parsedJson) {
     _uuid = parsedJson['uuid'] ?? '';
     _title = parsedJson['title'] ?? '';
     _description = parsedJson['description'] ?? '';

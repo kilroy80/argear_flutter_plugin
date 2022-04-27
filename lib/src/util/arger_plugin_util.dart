@@ -4,11 +4,11 @@ class ARGearPlugUtil {
 
   final _valueList = <double>[];
 
-  setBeautyValue(List<double> list) {
+  void setBeautyValue(List<double> list) {
     _valueList.addAll(list);
   }
 
-  getBeautyValue() {
+  List<double> getBeautyValue() {
     return _valueList;
   }
 

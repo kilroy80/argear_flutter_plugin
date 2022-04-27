@@ -33,7 +33,7 @@ class ARGearController {
   final ARGearControllerCallback? onPre;
   final ARGearControllerCallback? onComplete;
 
-  init() async {
+  Future<void> init() async {
     try {
       await _channel.invokeMethod<void>('init', {
         'apiUrl': apiUrl,
@@ -46,7 +46,7 @@ class ARGearController {
     }
   }
 
-  changeCameraFacing() async {
+  Future<void> changeCameraFacing() async {
     try {
       var result = await _channel.invokeMethod<dynamic>('changeCameraFacing');
     } on PlatformException catch (e) {
@@ -54,7 +54,7 @@ class ARGearController {
     }
   }
 
-  changeCameraRatio(ARGCameraRatio ratio) async {
+  Future<void> changeCameraRatio(ARGCameraRatio ratio) async {
     try {
       await _channel.invokeMethod<dynamic>('changeCameraRatio', {
         'ratio': ratio.index
@@ -64,7 +64,7 @@ class ARGearController {
     }
   }
 
-  setVideoBitrate(ARGVideoBitrate bitrate) async {
+  Future<void> setVideoBitrate(ARGVideoBitrate bitrate) async {
     try {
       await _channel.invokeMethod<dynamic>('setVideoBitrate', {
         'bitrate': bitrate.index
@@ -74,7 +74,7 @@ class ARGearController {
     }
   }
 
-  setSticker(ItemModel itemModel) async {
+  Future<void> setSticker(ItemModel itemModel) async {
     onPre?.call('preCallback', 'setSticker');
     try {
       var result = await _channel.invokeMethod<dynamic>('setSticker', {
@@ -89,7 +89,7 @@ class ARGearController {
     }
   }
 
-  clearSticker() async {
+  Future<void> clearSticker() async {
     try {
       await _channel.invokeMethod<dynamic>('clearSticker');
     } on PlatformException catch (e) {
@@ -97,7 +97,7 @@ class ARGearController {
     }
   }
 
-  setFilter(ItemModel itemModel) async {
+  Future<void> setFilter(ItemModel itemModel) async {
     onPre?.call('preCallback', 'setFilter');
     try {
       var result = await _channel.invokeMethod<dynamic>('setFilter', {
@@ -112,7 +112,7 @@ class ARGearController {
     }
   }
 
-  setFilterLevel(double level) async {
+  Future<void> setFilterLevel(double level) async {
     try {
       await _channel.invokeMethod<dynamic>('setFilterLevel', {
         'level': level
@@ -122,7 +122,7 @@ class ARGearController {
     }
   }
 
-  clearFilter() async {
+  Future<void> clearFilter() async {
     try {
       await _channel.invokeMethod<dynamic>('clearFilter');
     } on PlatformException catch (e) {
@@ -130,7 +130,7 @@ class ARGearController {
     }
   }
 
-  setBeauty(ARGBeauty type, double value) async {
+  Future<void> setBeauty(ARGBeauty type, double value) async {
     try {
       await _channel.invokeMethod<dynamic>('setBeauty', {
         'type': type.index,
@@ -141,7 +141,7 @@ class ARGearController {
     }
   }
 
-  setBeautyValues(List<double> values) async {
+  Future<void> setBeautyValues(List<double> values) async {
     try {
       await _channel.invokeMethod<dynamic>('setBeautyValues', {
         'values': Platform.isIOS ? values.toString() : values,
@@ -151,7 +151,7 @@ class ARGearController {
     }
   }
 
-  setDefaultBeauty() async {
+  Future<void> setDefaultBeauty() async {
     try {
       await _channel.invokeMethod<dynamic>('setDefaultBeauty');
     } on PlatformException catch (e) {
@@ -167,7 +167,7 @@ class ARGearController {
     }
   }
 
-  setBulge(ARGBulge type) async {
+  Future<void> setBulge(ARGBulge type) async {
     try {
       await _channel.invokeMethod<dynamic>('setBulge', {
         'type': type.index
@@ -177,7 +177,7 @@ class ARGearController {
     }
   }
 
-  clearBulge() async {
+  Future<void> clearBulge() async {
     try {
       await _channel.invokeMethod<dynamic>('clearBulge');
     } on PlatformException catch (e) {
@@ -185,7 +185,7 @@ class ARGearController {
     }
   }
 
-  takePicture() async {
+  Future<void> takePicture() async {
     try {
       await _channel.invokeMethod<dynamic>('takePicture');
     } on PlatformException catch (e) {
@@ -201,7 +201,7 @@ class ARGearController {
     }
   }
 
-  stopRecording() async {
+  Future<void> stopRecording() async {
     onPre?.call('preCallback', 'stopRecording');
     try {
       await _channel.invokeMethod<dynamic>('stopRecording');
@@ -210,7 +210,7 @@ class ARGearController {
     }
   }
 
-  toggleRecording() async {
+  Future<void> toggleRecording() async {
     try {
       await _channel.invokeMethod<dynamic>('toggleRecording');
     } on PlatformException catch (e) {
@@ -218,7 +218,7 @@ class ARGearController {
     }
   }
 
-  exitApp() async {
+  Future<void> exitApp() async {
     if (Platform.isAndroid) {
       try {
         await _channel.invokeMethod<dynamic>('exitApp');

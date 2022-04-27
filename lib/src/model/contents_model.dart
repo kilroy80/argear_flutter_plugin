@@ -28,7 +28,7 @@ class ContentsModel {
     'categories': _categories.map((i) => i.toJson()).toList(),
   };
 
-  parse(parsedJson) {
+  void parse(parsedJson) {
     _apiKey = parsedJson['api_key'] ?? '';
     _name = parsedJson['name'] ?? '';
     _description = parsedJson['description'] ?? '';
