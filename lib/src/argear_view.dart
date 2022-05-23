@@ -1,6 +1,9 @@
 import 'package:argear_flutter_plugin/argear_flutter_plugin.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 
 typedef ARGearViewCreatedCallback = void Function(ARGearController controller);
 typedef PlatformViewCreatedCallback = void Function(int id);
@@ -42,9 +45,41 @@ class _ARGearViewState extends State<ARGearView> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     if (defaultTargetPlatform == TargetPlatform.android) {
-      return ARGearAndroidView(
-        type: 'argear_flutter_plugin',
-        onViewCreated: _onPlatformViewCreated,
+      // return ARGearAndroidView(
+      //   type: 'argear_flutter_plugin',
+      //   onViewCreated: _onPlatformViewCreated,
+      // );
+      return PlatformViewLink(
+        viewType: 'argear_flutter_plugin',
+        surfaceFactory: (
+            BuildContext context,
+            PlatformViewController controller,
+            ) {
+          return AndroidViewSurface(
+            controller: controller as AndroidViewController,
+            gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+            hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+          );
+        },
+        onCreatePlatformView: (PlatformViewCreationParams params) {
+          final ExpensiveAndroidViewController controller =
+          PlatformViewsService.initExpensiveAndroidView(
+            id: params.id,
+            viewType: 'argear_flutter_plugin',
+            layoutDirection: TextDirection.ltr,
+            // creationParams: creationParams,
+            creationParams: <String, dynamic>{
+            },
+            creationParamsCodec: const StandardMessageCodec(),
+            onFocus: () => params.onFocusChanged(true),
+          );
+          controller
+            ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+            ..addOnPlatformViewCreatedListener(_onPlatformViewCreated)
+            ..create();
+
+          return controller;
+        },
       );
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       return ARGearIOSView(
