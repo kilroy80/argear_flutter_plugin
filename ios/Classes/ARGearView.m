@@ -178,7 +178,14 @@
 
     } else if ([call.method isEqualToString:@"takePicture"]) {
 
-        [self takePictureAction];
+        NSString *filePath = call.arguments[@"filePath"];
+        
+        if (filePath != nil) {
+            [self takePictureFileAction:filePath];
+        } else {
+            [self takePictureAction];
+        }
+        
 
     } else if ([call.method isEqualToString:@"startRecording"]) {
 
@@ -373,6 +380,14 @@
     }];
 }
 
+- (void)takePictureFileAction:(NSString *)filePath {
+
+    [_argMedia takePic:^(UIImage * _Nonnull image) {
+        NSLog(@"finish");
+        [self takePictureFileFinished:image filePath:filePath];
+    }];
+}
+
 - (void)toggleRecording:(int)toggle {
 
     if (toggle == 0) {
@@ -410,6 +425,12 @@
     } error:^{
 
     }];
+}
+
+- (void)takePictureFileFinished:(UIImage *)image filePath:(NSString *)filePath {
+    NSData *imageData = UIImageJPEGRepresentation(image, 0.85f);
+    [imageData writeToFile:filePath atomically:YES];
+    [self.channel invokeMethod:@"takePictureCallback" arguments:@"success"];
 }
 
 - (void)recordVideoFinished:(NSDictionary *)videoInfo {

@@ -185,9 +185,16 @@ class ARGearController {
     }
   }
 
-  Future<void> takePicture() async {
+  Future<void> takePicture([String filePath = '']) async {
+    if (filePath.isNotEmpty) {
+      var fileExtension = filePath.split('.').last;
+      if (fileExtension.toLowerCase() != 'jpg') throw Exception('The supported extension is jpg.');
+    }
+
     try {
-      await _channel.invokeMethod<dynamic>('takePicture');
+      await _channel.invokeMethod<dynamic>('takePicture', {
+        'filePath': filePath
+      });
     } on PlatformException catch (e) {
       debugPrint('${e.code}: ${e.message}');
     }

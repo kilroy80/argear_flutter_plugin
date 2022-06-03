@@ -38,7 +38,8 @@ class GLView: GLSurfaceView, GLSurfaceView.Renderer {
         holder.setFormat(PixelFormat.RGBA_8888)
 
         setRenderer(this)
-        setZOrderOnTop(true)
+//        setZOrderOnTop(true)
+//        setZOrderMediaOverlay(true)
 
         renderMode = RENDERMODE_CONTINUOUSLY
         preserveEGLContextOnPause = false

@@ -134,7 +134,13 @@ class ARGearView(private val activity: Activity, context: Context, messenger: Bi
                 ARGearManager.clearBulge()
             }
             "takePicture" -> {
-                arGearSessionView?.takePicture()
+                val filePath: String? = call.argument("filePath")
+
+                if (filePath != null) {
+                    arGearSessionView?.takePictureForFile(filePath)
+                } else {
+                    arGearSessionView?.takePicture()
+                }
             }
             "startRecording" -> {
                 arGearSessionView?.startRecording()

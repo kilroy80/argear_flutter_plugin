@@ -3,6 +3,7 @@ package com.kino.argear.argear_flutter_plugin.core
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Point
 import android.media.Image
 import android.net.Uri
@@ -51,7 +52,7 @@ class ARGearSessionView : FrameLayout {
     private var viewActivity: Activity? = null
 
     private lateinit var camera: ReferenceCamera
-    private lateinit var glView: CameraGLView
+    private lateinit var glView: GLView
     private lateinit var screenRenderer: ScreenRenderer
     private lateinit var cameraTexture: CameraTexture
 
@@ -70,9 +71,12 @@ class ARGearSessionView : FrameLayout {
     private var isVideoRecord = false
 
     private var videoFilePath: String = ""
+    private var flutterFilePath: String = ""
 
     var gLViewWidth = 0
     var gLViewHeight = 0
+
+    private lateinit var dimView: FrameLayout
 
     private fun init() {
         ARGearManager.setMediaPath(context, "/ARGEAR")
@@ -119,9 +123,18 @@ class ARGearSessionView : FrameLayout {
         screenRenderer = ScreenRenderer()
         cameraTexture = CameraTexture()
 
-        glView = CameraGLView(context, glViewListener)
+        glView = GLView(context, glViewListener)
 //        glView.setZOrderMediaOverlay(true)
         addView(glView, params)
+
+        val dimParams = LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+
+        dimView = FrameLayout(context)
+        dimView.setBackgroundColor(Color.TRANSPARENT)
+        addView(dimView, dimParams)
     }
 
     private fun initCamera() {
@@ -220,10 +233,19 @@ class ARGearSessionView : FrameLayout {
 
     fun changeCameraRatio(ratio: Int) {
         if (::camera.isInitialized && ::argSession.isInitialized) {
+            dimView.setBackgroundColor(Color.BLACK)
+
             argSession.pause()
             ARGearConfig.screenRatio = ARGearTypeUtils.convertRatioEnum(ratio)
-            setGLViewSize(camera.previewSize)
-            argSession.resume()
+//            setGLViewSize(camera.previewSize)
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                setGLViewSize(camera.previewSize)
+                argSession.resume()
+
+                dimView.setBackgroundColor(Color.TRANSPARENT)
+            }, 250)
+
         }
     }
 
@@ -253,6 +275,11 @@ class ARGearSessionView : FrameLayout {
     fun takePicture() {
         isShooting = true
         isShootingComplete = false
+    }
+
+    fun takePictureForFile(path: String) {
+        flutterFilePath = path
+        takePicture()
     }
 
     private fun takePictureOnGlThread(textureId: Int) {
@@ -298,6 +325,50 @@ class ARGearSessionView : FrameLayout {
                 MediaStoreUtil.writeImageToMediaStore(context, path)
             }
 
+        }
+    }
+
+    private fun takePictureOnGlThread(textureId: Int, fileNameJpg: String) {
+        isShooting = false
+        val ratio: ARGMedia.Ratio = when (ARGearManager.screenRatio) {
+            ARGFrame.Ratio.RATIO_FULL -> {
+                ARGMedia.Ratio.RATIO_16_9
+            }
+            ARGFrame.Ratio.RATIO_4_3 -> {
+                ARGMedia.Ratio.RATIO_4_3
+            }
+            else -> {
+                ARGMedia.Ratio.RATIO_1_1
+            }
+        }
+
+//        val path = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//            ARGearManager.innerMediaPath + "/" + System.currentTimeMillis() + ".jpg"
+//        } else {
+//            ARGearManager.mediaPath + "/" + System.currentTimeMillis() + ".jpg"
+//        }
+
+        argMedia.takePicture(textureId, fileNameJpg, ratio)
+//        context.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://$path")))
+
+        viewActivity?.runOnUiThread {
+//            Toast.makeText(this, "The file has been saved to your Gallery.", Toast.LENGTH_SHORT).show()
+
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//                MediaStoreUtil.writeImageToMediaStoreForQ(context,
+//                    path,
+//                    object : MediaStoreUtil.OnMediaStoreCallback {
+//                        override fun onComplete() {
+//                            isShootingComplete = true
+//                            methodChannel?.invokeMethod("takePictureCallback", "success")
+//                        }
+//                    })
+//            } else {
+//                MediaStoreUtil.writeImageToMediaStore(context, path)
+//            }
+
+            methodChannel?.invokeMethod("takePictureCallback", "success")
+            flutterFilePath = ""
         }
     }
 
@@ -349,8 +420,8 @@ class ARGearSessionView : FrameLayout {
     }
     
     // region - GLViewListener
-    private var glViewListener: CameraGLView.GLViewListener = object :
-            CameraGLView.GLViewListener {
+    private var glViewListener: GLView.GLViewListener = object :
+        GLView.GLViewListener {
         override fun onSurfaceCreated(
                 gl: GL10?,
                 config: EGLConfig?
@@ -374,7 +445,12 @@ class ARGearSessionView : FrameLayout {
                 if (argMedia.isRecording) argMedia.updateFrame(it.textureId)
                 if (isShooting && !isShootingComplete) {
 //                    glView.onQueueEvent{
-                        takePictureOnGlThread(it.textureId)
+                        if (flutterFilePath.isNotEmpty()) {
+                            takePictureOnGlThread(it.textureId, flutterFilePath)
+                        } else {
+                            takePictureOnGlThread(it.textureId)
+                        }
+
 //                    }
                 }
             }

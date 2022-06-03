@@ -4,6 +4,7 @@ import 'package:argear_flutter_plugin_example/argear_manager.dart';
 import 'package:argear_flutter_plugin_example/provider/main_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
 
 class BottomFunctionMain extends StatelessWidget {
   BottomFunctionMain({
@@ -113,7 +114,12 @@ class BottomFunctionMain extends StatelessWidget {
               InkWell(
                 onTap: () async {
                   if (mainProvider.cameraButtonStatus.value == CameraButtonStauts.CaptureIdle) {
-                    ARGearManager().arGearController.takePicture();
+
+                    var timeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+                    var fileDir = (await getApplicationDocumentsDirectory()).path;
+                    var filePath = '$fileDir/$timeStamp.jpg';
+
+                    ARGearManager().arGearController.takePicture(filePath);
                   } else if (mainProvider.cameraButtonStatus.value == CameraButtonStauts.RecordIdle) {
 
                     mainProvider.cameraButtonStatus.value = CameraButtonStauts.RecordFadeOut;
