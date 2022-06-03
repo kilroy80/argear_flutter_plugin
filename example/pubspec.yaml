@@ -38,7 +38,7 @@ dependencies:
 
   flutter_xlider:
     git:
-      url: git://github.com/Ali-Azmoud/flutter_xlider.git
+      url: git@github.com:Ali-Azmoud/flutter_xlider.git
   fluttertoast: ^8.0.8
 
   path_provider: ^2.0.10
