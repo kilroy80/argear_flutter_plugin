@@ -1,11 +1,11 @@
 name: argear_flutter_plugin
 description: ARGear SDK Flutter Plugin. This plugin supports Android and iOS. All features supported by ARGear SDK are all features supported by ARGear SDK.
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/kilroy80/argear_flutter_plugin
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
-  flutter: ">=2.0.0"
+  flutter: ">=3.0.0"
 
 dependencies:
   flutter:
