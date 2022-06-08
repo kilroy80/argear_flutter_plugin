@@ -6,10 +6,7 @@ import android.os.Environment
 import android.util.Log
 import com.kino.argear.argear_flutter_plugin.enum.ARGBitrate
 import com.kino.argear.argear_flutter_plugin.model.ItemModel
-import com.kino.argear.argear_flutter_plugin.utils.DownloadAsyncResponse
-import com.kino.argear.argear_flutter_plugin.utils.DownloadAsyncTask
-import com.kino.argear.argear_flutter_plugin.utils.FileDeleteAsyncTask
-import com.kino.argear.argear_flutter_plugin.utils.PreferenceUtil
+import com.kino.argear.argear_flutter_plugin.utils.*
 import com.seerslab.argear.exceptions.InvalidContentsException
 import com.seerslab.argear.exceptions.NetworkException
 import com.seerslab.argear.exceptions.SignedUrlGenerationException
@@ -123,15 +120,25 @@ object ARGearManager {
 
         val itemUpdateAt = item?.updatedAt ?: 0
         if (itemUpdateAt > 0 && itemUpdateAt > getStickerUpdateAt(context, item?.uuid ?: "")) {
-            FileDeleteAsyncTask(File(filePath.toString()), object :
-                    FileDeleteAsyncTask.OnAsyncFileDeleteListener {
+//            FileDeleteAsyncTask(File(filePath.toString()), object :
+//                    FileDeleteAsyncTask.OnAsyncFileDeleteListener {
+//                override fun processFinish(result: Any?) {
+//                    Log.d(TAG, "file delete success!")
+//
+//                    setStickerUpdateAt(context, item?.uuid ?: "", itemUpdateAt)
+//                    requestSignedUrl(context, item, filePath.toString(), true, callback)
+//                }
+//            }).execute()
+
+            FileAsyncUtil.deleteFile(File(filePath.toString()), object : OnAsyncFileDeleteListener {
                 override fun processFinish(result: Any?) {
                     Log.d(TAG, "file delete success!")
 
                     setStickerUpdateAt(context, item?.uuid ?: "", itemUpdateAt)
                     requestSignedUrl(context, item, filePath.toString(), true, callback)
                 }
-            }).execute()
+            })
+
         } else {
             if (File(filePath.toString()).exists()) {
                 setItem(ARGContents.Type.ARGItem, filePath.toString(), item, callback)
@@ -149,14 +156,23 @@ object ARGearManager {
 
         val itemUpdateAt = item?.updatedAt ?: 0
         if (itemUpdateAt > 0 && itemUpdateAt > getFilterUpdateAt(context, item?.uuid ?: "")) {
-            FileDeleteAsyncTask(File(filePath.toString()), object : FileDeleteAsyncTask.OnAsyncFileDeleteListener {
+//            FileDeleteAsyncTask(File(filePath.toString()), object : FileDeleteAsyncTask.OnAsyncFileDeleteListener {
+//                override fun processFinish(result: Any?) {
+//                    Log.d(TAG, "file delete success!")
+//
+//                    setFilterUpdateAt(context, item?.uuid ?: "", itemUpdateAt)
+//                    requestSignedUrl(context, item, filePath.toString(), false, callback)
+//                }
+//            }).execute()
+
+            FileAsyncUtil.deleteFile(File(filePath.toString()), object : OnAsyncFileDeleteListener {
                 override fun processFinish(result: Any?) {
                     Log.d(TAG, "file delete success!")
 
                     setFilterUpdateAt(context, item?.uuid ?: "", itemUpdateAt)
                     requestSignedUrl(context, item, filePath.toString(), false, callback)
                 }
-            }).execute()
+            })
         } else {
             if (File(filePath.toString()).exists()) {
                 setItem(ARGContents.Type.FilterItem, filePath.toString(), item, callback)
@@ -260,7 +276,23 @@ object ARGearManager {
             isSticker: Boolean,
             callback: OnARGearManagerCallback
     ) {
-        DownloadAsyncTask(targetPath, url, object : DownloadAsyncResponse {
+//        DownloadAsyncTask(targetPath, url, object : DownloadAsyncResponse {
+//            override fun processFinish(result: Boolean) {
+//                if (result) {
+//                    if (isSticker) {
+//                        setItem(ARGContents.Type.ARGItem, targetPath, item, callback)
+//                    } else {
+//                        setItem(ARGContents.Type.FilterItem, targetPath, item, callback)
+//                    }
+//                    Log.d(TAG, "download success!")
+//                } else {
+//                    Log.d(TAG, "download failed!")
+//                    callback.onError("10004", "failed", null)
+//                }
+//            }
+//        }).execute()
+
+        FileAsyncUtil.downloadFile(targetPath, url, object : DownloadAsyncResponse {
             override fun processFinish(result: Boolean) {
                 if (result) {
                     if (isSticker) {
@@ -274,7 +306,7 @@ object ARGearManager {
                     callback.onError("10004", "failed", null)
                 }
             }
-        }).execute()
+        })
     }
 
     fun setFilterUpdateAt(context: Context, itemId: String, updateAt: Long) {

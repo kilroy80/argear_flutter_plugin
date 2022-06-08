@@ -16,10 +16,7 @@ import android.widget.FrameLayout
 import com.kino.argear.argear_flutter_plugin.camera.*
 import com.kino.argear.argear_flutter_plugin.rendering.CameraTexture
 import com.kino.argear.argear_flutter_plugin.rendering.ScreenRenderer
-import com.kino.argear.argear_flutter_plugin.utils.ARGearTypeUtils
-import com.kino.argear.argear_flutter_plugin.utils.FileDeleteAsyncTask
-import com.kino.argear.argear_flutter_plugin.utils.MediaStoreUtil
-import com.kino.argear.argear_flutter_plugin.utils.ScreenUtil
+import com.kino.argear.argear_flutter_plugin.utils.*
 import com.seerslab.argear.session.ARGFrame
 import com.seerslab.argear.session.ARGMedia
 import com.seerslab.argear.session.ARGSession
@@ -106,11 +103,6 @@ class ARGearSessionView : FrameLayout {
 
         initGLView()
         initCamera()
-
-        // Debug mode
-//        argSession.setDebugInference(EnumSet.of(
-//            ARGInferenceConfig.Debug.FACE_LANDMARK
-//        ))
     }
 
     private fun initGLView() {
@@ -176,12 +168,12 @@ class ARGearSessionView : FrameLayout {
         if (::camera.isInitialized && ::argSession.isInitialized) {
             try {
                 camera.destroy()
-                glView.dispose(Runnable {
+                glView.dispose {
                     if (!isDestroy) {
                         argSession.destroy()
                         isDestroy = true
                     }
-                })
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -259,16 +251,27 @@ class ARGearSessionView : FrameLayout {
 
     private fun clearTempMediaFiles() {
         ARGearManager.innerMediaPath?.let {
-            FileDeleteAsyncTask(
+//            FileDeleteAsyncTask(
+//                File(it),
+//                object : FileDeleteAsyncTask.OnAsyncFileDeleteListener {
+//                    override fun processFinish(result: Any?) {
+//                        val dir = File(it)
+//                        if (!dir.exists()) {
+//                            dir.mkdirs()
+//                        }
+//                    }
+//                }).execute()
+
+            FileAsyncUtil.deleteFile(
                 File(it),
-                object : FileDeleteAsyncTask.OnAsyncFileDeleteListener {
+                object : OnAsyncFileDeleteListener {
                     override fun processFinish(result: Any?) {
                         val dir = File(it)
                         if (!dir.exists()) {
                             dir.mkdirs()
                         }
                     }
-                }).execute()
+                })
         }
     }
 
@@ -342,31 +345,9 @@ class ARGearSessionView : FrameLayout {
             }
         }
 
-//        val path = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//            ARGearManager.innerMediaPath + "/" + System.currentTimeMillis() + ".jpg"
-//        } else {
-//            ARGearManager.mediaPath + "/" + System.currentTimeMillis() + ".jpg"
-//        }
-
         argMedia.takePicture(textureId, fileNameJpg, ratio)
-//        context.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://$path")))
 
         viewActivity?.runOnUiThread {
-//            Toast.makeText(this, "The file has been saved to your Gallery.", Toast.LENGTH_SHORT).show()
-
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//                MediaStoreUtil.writeImageToMediaStoreForQ(context,
-//                    path,
-//                    object : MediaStoreUtil.OnMediaStoreCallback {
-//                        override fun onComplete() {
-//                            isShootingComplete = true
-//                            methodChannel?.invokeMethod("takePictureCallback", "success")
-//                        }
-//                    })
-//            } else {
-//                MediaStoreUtil.writeImageToMediaStore(context, path)
-//            }
-
             methodChannel?.invokeMethod("takePictureCallback", "success")
             flutterFilePath = ""
         }
