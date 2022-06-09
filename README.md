@@ -2,6 +2,11 @@
 
 ARGear SDK Flutter Plugin. This plugin supports Android and iOS. All features supported by ARGear SDK are all features supported by ARGear SDK.
 
+# Notice
+
+Flutter Version <= 2.10.5 used this plugin version 0.0.2<br>
+Flutter Version >= 3.0.0 used this plugin version 0.0.3
+
 ## Getting Started
 
 #### Android
