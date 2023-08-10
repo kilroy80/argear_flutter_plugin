@@ -8,6 +8,10 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
+interface DownloadAsyncResponse {
+    fun processFinish(result: Boolean)
+}
+
 class DownloadAsyncTask(
         private val targetPath: String,
         private val achieveUrl: String,

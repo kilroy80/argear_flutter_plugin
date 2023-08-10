@@ -15,6 +15,6 @@ class ARGearViewFactory(private val activity: Activity, private val messenger: B
         val params = args as HashMap<*, *>
         Log.i("ARGearViewFactory", id.toString())
         Log.i("ARGearViewFactory", args.toString())
-        return ARGearView(activity, context!!, messenger, id)
+        return ARGearView(activity, context, messenger, id)
     }
 }

@@ -16,7 +16,7 @@ object ARGearUtils {
         val toastText = when {
             throwable?.message != null -> {
                 Log.e(tag, errorMsg, throwable)
-                errorMsg + ": " + throwable.message
+                "$errorMsg: ${throwable.message}"
             }
             throwable != null -> {
                 Log.e(tag, errorMsg, throwable)

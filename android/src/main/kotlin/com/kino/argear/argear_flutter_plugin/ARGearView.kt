@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.View
 import com.google.gson.Gson
@@ -21,7 +20,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 
-class ARGearView(private val activity: Activity, context: Context, messenger: BinaryMessenger, id: Int)
+class ARGearView(private val activity: Activity, context: Context?, messenger: BinaryMessenger, id: Int)
     : PlatformView, MethodChannel.MethodCallHandler {
 
     private val TAG: String = ARGearView::class.java.simpleName
@@ -32,10 +31,12 @@ class ARGearView(private val activity: Activity, context: Context, messenger: Bi
     private var arGearSessionView: ARGearSessionView? = null
 
     init {
+        if (context == null) throw Exception("ARGearView context null Exception");
+
         methodChannel.setMethodCallHandler(this)
         arGearSessionView = ARGearSessionView(context)
 
-        setupLifeCycle(context)
+        setupLifeCycle()
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
@@ -174,7 +175,7 @@ class ARGearView(private val activity: Activity, context: Context, messenger: Bi
         }
     }
 
-    private fun setupLifeCycle(context: Context) {
+    private fun setupLifeCycle() {
         activityLifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 Log.i(TAG, "onActivityCreated")

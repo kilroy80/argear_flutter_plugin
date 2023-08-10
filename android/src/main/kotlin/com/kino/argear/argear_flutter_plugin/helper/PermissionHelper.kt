@@ -3,15 +3,20 @@ package com.kino.argear.argear_flutter_plugin.utils
 import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
+import android.os.Build.VERSION
 import androidx.core.app.ActivityCompat
 
 object PermissionHelper {
 
     private const val PERMISSION_CODE = 0x123
 
-    private val permissions = arrayOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO,
+    private val permissions = if (VERSION.SDK_INT >= 28) arrayOf(
+        Manifest.permission.CAMERA,
+        Manifest.permission.RECORD_AUDIO,
+    ) else arrayOf(
+        Manifest.permission.CAMERA,
+        Manifest.permission.RECORD_AUDIO,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
     )
 
     @JvmStatic
