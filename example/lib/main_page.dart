@@ -41,7 +41,8 @@ class _MainPageState extends State<MainPage> {
   @override
   void dispose() {
     arGearController.dispose();
-    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(
+        SystemUiMode.manual, overlays: SystemUiOverlay.values);
     super.dispose();
   }
 
@@ -54,7 +55,8 @@ class _MainPageState extends State<MainPage> {
     ]);
 
     if (!kIsWeb && !Platform.isAndroid) {
-      SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+      SystemChrome.setEnabledSystemUIMode(
+          SystemUiMode.manual, overlays: [SystemUiOverlay.bottom]);
     }
 
     return Scaffold(
